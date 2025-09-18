@@ -3,15 +3,18 @@ import { $fetch } from "ofetch";
 import { readJsonFile } from "./utils.mjs";
 
 const app = new H3();
+const ultimateProxyUrl = "https://hqs-sgw-test.mindimed.com";
 
 // mock 路由
-app.use("/api/qualityControlTaskForms/formName", (event) => readJsonFile("../server2Files/qualityControlTaskForms_formName.json", event));
+app.use("/api/qualityControlTaskForms/formName", (event) =>
+  readJsonFile("../server2Files/qualityControlTaskForms_formName.json", event)
+);
 
 // 兜底代理
 app.use("/api/**", async (event) => {
   const req = event.runtime.node.req;
   const url = req.url || "";
-  const target = "https://hqs-sgw-test.mindimed.com" + url;
+  const target = ultimateProxyUrl + url;
 
   // 组装 fetch options
   const opts = {
@@ -24,7 +27,7 @@ app.use("/api/**", async (event) => {
     opts.body = req;
   }
 
-  console.log("兜底代理: ", target, "method:", req.method);
+  console.log("-->>兜底代理: ", target, "method:", req.method);
   return await $fetch(target, opts);
 });
 
