@@ -18,6 +18,7 @@ app.use("/api/qualityControlTaskForms/formName", (event) =>
 //   const req = event.runtime.node.req;
 //   const url = req.url || "";
 //   const target = ultimateProxyUrl + url;
+//   console.log("-->>兜底代理: ", target, "method:", req.method);
 
 //   // 组装 fetch options
 //   const opts = {
@@ -30,13 +31,13 @@ app.use("/api/qualityControlTaskForms/formName", (event) =>
 //     opts.body = req;
 //   }
 
-//   console.log("-->>兜底代理: ", target, "method:", req.method);
 //   return await $fetch(target, opts);
 // });
 
 app.use("/api/**", async (event) => {
   const req = event.runtime.node.req;
   const targetUrl = ultimateProxyUrl + (req.url || "");
+  console.log("-->>兜底代理: ", targetUrl, "method:", req.method);
 
   // 避免自循环代理（可选）
   if (targetUrl.includes("localhost:3001")) {
