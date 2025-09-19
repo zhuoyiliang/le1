@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"axios": "^1.12.2",
 		"crossws": "^0.4.1",
 		"h3": "2.0.0-beta.4",
 		"ofetch": "^1.4.1"
