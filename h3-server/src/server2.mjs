@@ -5,13 +5,17 @@ import { readJsonFile } from "./utils.mjs";
 import https from "https";
 
 const app = new H3();
-// const ultimateProxyUrl = "https://hqs-demo.mindimed.com";
-const ultimateProxyUrl = "https://hqs-sgw-test.mindimed.com";
+const ultimateProxyUrl = "https://hqs-demo.mindimed.com";
+// const ultimateProxyUrl = "https://hqs-sgw-test.mindimed.com";
 
 //#region  mock 路由
-app.use("/api/qualityControlTaskForms/formName", (event) =>
-  readJsonFile("../server2Files/qualityControlTaskForms_formName.json", event)
+// app.use("/api/qualityControlTaskForms/formName", (event) =>
+//   readJsonFile("../server2Files/qualityControlTaskForms_formName.json", event)
+// );
+app.use("/api/qualityControlSetting/list", (event) =>
+  readJsonFile("settingList.json", event)
 );
+
 //#region
 
 // 兜底代理
