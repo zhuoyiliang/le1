@@ -1,0 +1,808 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>儿童中医保健</title>
+    <script
+      type="text/javascript"
+      src="../../../../Javascript/DateControl.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../../Javascript/pubfunpro.js"
+    ></script>
+    <script
+      src="../../../CommonControl/Template.js"
+      type="text/javascript"
+    ></script>
+    <script type="text/javascript">
+      function CheckValue() {
+        document.getElementById("btnSave").disabled = true;
+        if (document.getElementById("txtChkdate").value == "") {
+          alert("检查日期不可为空！");
+          document.getElementById("txtChkdate").focus();
+          document.getElementById("btnSave").disabled = false;
+
+          return false;
+        }
+        document.getElementById("hdnyouerhuanbing").value = GetYouErHuanBing();
+        return true;
+      }
+      function PrintReport() {
+        var url =
+          "PrintZhongYiBiaoJian.aspx?ChildID=" +
+          document.getElementById("hdnChildId").value +
+          "&Health=" +
+          document.getElementById("hdnHealthId").value;
+        // window.open(url);
+        window.open(
+          url,
+          "弘扬软件",
+          "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=900px, height=900px,left=200px,top=100px"
+        );
+      }
+      function SetYouErHuanBing(type) {
+        switch (type) {
+          case "1":
+            if (document.getElementById("chkyeqhb" + type).checked) {
+              for (var i = 2; i < 10; i++) {
+                document.getElementById("chkyeqhb" + i).checked = false;
+              }
+              document.getElementById("txtfeiyan").value = "";
+              document.getElementById("txtfeiyan").disabled = true;
+              document.getElementById("txtfuxiezhuyuan").value = "";
+              document.getElementById("txtfuxiezhuyuan").disabled = true;
+              document.getElementById("txtwaishangzhuyuan").value = "";
+              document.getElementById("txtwaishangzhuyuan").disabled = true;
+            }
+            break;
+          case "2":
+            if (document.getElementById("chkyeqhb" + type).checked) {
+              document.getElementById("chkyeqhb1").checked = false;
+              document.getElementById("txtfeiyan").disabled = false;
+            } else {
+              document.getElementById("txtfeiyan").value = "";
+              document.getElementById("txtfeiyan").disabled = true;
+            }
+            break;
+          case "7":
+            if (document.getElementById("chkyeqhb" + type).checked) {
+              document.getElementById("chkyeqhb1").checked = false;
+              document.getElementById("txtfuxiezhuyuan").disabled = false;
+            } else {
+              document.getElementById("txtfuxiezhuyuan").value = "";
+              document.getElementById("txtfuxiezhuyuan").disabled = true;
+            }
+            break;
+          case "8":
+            if (document.getElementById("chkyeqhb" + type).checked) {
+              document.getElementById("chkyeqhb1").checked = false;
+              document.getElementById("txtwaishangzhuyuan").disabled = false;
+            } else {
+              document.getElementById("txtwaishangzhuyuan").value = "";
+              document.getElementById("txtwaishangzhuyuan").disabled = true;
+            }
+            break;
+          default:
+            document.getElementById("chkyeqhb1").checked = false;
+            break;
+        }
+      }
+      function GetYouErHuanBing() {
+        var ret = "";
+        for (var i = 1; i < 10; i++) {
+          if (document.getElementById("chkyeqhb" + i).checked) ret += i + "/";
+        }
+        return ret;
+      }
+      function btnDelClick() {
+        if (confirm("确定删除吗？")) {
+          var child = document.getElementById("hdnChildId").value;
+          var health = document.getElementById("hdnHealthId").value;
+          if (child && health) {
+            var ret =
+              W_Erbao_AspCode_JianKangTiJian_ZhongYiBiaoJian_ZhongYiBiaoJian.DelZhongYi(
+                child,
+                health
+              ).value;
+            if (ret == "1") {
+              alert("删除成功！");
+              window.location.href =
+                "ZhongYiBiaoJian.aspx?ChildID=" + child + "&HealthID=" + health;
+            } else {
+              alert("删除失败！");
+            }
+          }
+        }
+      }
+    </script>
+    <link
+      href="../../../../App_Themes/blue/style.css"
+      type="text/css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <form
+      name="form1"
+      method="post"
+      action="ZhongYiBiaoJian.aspx?ChildID=85554993&amp;Name=%u6210%u53ef%u5fc3&amp;Flag=%u6b27%u96ea%u971e%u4e4b%u5973&amp;Sex=2&amp;Birthday=2021-05-03&amp;IsRoot=1&amp;Town=&amp;HealthID=105387745&amp;ChildCycle=4&amp;EndCase=0&amp;ReadOnly=0&amp;Random=555&amp;Chkorgname=&amp;BuluDate=2025-09-20&amp;etjktj"
+      id="form1"
+    >
+      <div>
+        <input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+        <input
+          type="hidden"
+          name="__EVENTARGUMENT"
+          id="__EVENTARGUMENT"
+          value=""
+        />
+        <input
+          type="hidden"
+          name="__VIEWSTATE"
+          id="__VIEWSTATE"
+          value="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"
+        />
+      </div>
+
+      <script type="text/javascript">
+        //<![CDATA[
+        var theForm = document.forms["form1"];
+        if (!theForm) {
+          theForm = document.form1;
+        }
+        function __doPostBack(eventTarget, eventArgument) {
+          if (!theForm.onsubmit || theForm.onsubmit() != false) {
+            theForm.__EVENTTARGET.value = eventTarget;
+            theForm.__EVENTARGUMENT.value = eventArgument;
+            theForm.submit();
+          }
+        }
+        //]]>
+      </script>
+
+      <script type="text/javascript" src="/ajaxpro/prototype.ashx"></script>
+      <script type="text/javascript" src="/ajaxpro/core.ashx"></script>
+      <script type="text/javascript" src="/ajaxpro/converter.ashx"></script>
+      <script
+        type="text/javascript"
+        src="/ajaxpro/W_Erbao_AspCode_JianKangTiJian_ZhongYiBiaoJian_ZhongYiBiaoJian,App_Web_p32nwuzz.ashx"
+      ></script>
+      <script
+        type="text/javascript"
+        src="/ajaxpro/HongYang.Frame.Subapp.Y_TemplateManage,HongYang.Frame.Subapp.ashx"
+      ></script>
+
+      <div style="margin-top: 10px">
+        <table
+          cellspacing="0"
+          border="1"
+          cellpadding="0"
+          width="97%"
+          align="center"
+        >
+          <tr>
+            <td style="padding: 5px" valign="top">
+              <fieldset>
+                <legend><b style="color: red">饮食调养</b></legend>
+                <div style="text-align: left; width: 100%">
+                  <table id="chkysty" border="0">
+                    <tr>
+                      <td>
+                        <input
+                          id="chkysty_0"
+                          type="checkbox"
+                          name="chkysty$0"
+                          checked="on"
+                        /><label for="chkysty_0"
+                          >养成良好的哺乳习惯，尽量延长夜间喂奶间隔时间；</label
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input
+                          id="chkysty_1"
+                          type="checkbox"
+                          name="chkysty$1"
+                        /><label for="chkysty_1"
+                          >养成良好的饮食习惯，避免偏食，节制零食，按时进食，提倡“三分饥”，防止乳食无度；</label
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input
+                          id="chkysty_2"
+                          type="checkbox"
+                          name="chkysty$2"
+                        /><label for="chkysty_2"
+                          >食物宜细、软、烂、碎，而且应品种多样；</label
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input
+                          id="chkysty_3"
+                          type="checkbox"
+                          name="chkysty$3"
+                        /><label for="chkysty_3"
+                          >严格控制冷饮，寒凉食物要适度；</label
+                        >
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </fieldset>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 5px" valign="top">
+              <fieldset>
+                <legend><b style="color: red">起居调摄</b></legend>
+                <div style="text-align: left; width: 100%">
+                  <table id="chkqjts" border="0">
+                    <tr>
+                      <td>
+                        <input
+                          id="chkqjts_0"
+                          type="checkbox"
+                          name="chkqjts$0"
+                        /><label for="chkqjts_0"
+                          >保证充足的睡眠时间，逐步养成夜间睡眠、白天活动的作息习惯；</label
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input
+                          id="chkqjts_1"
+                          type="checkbox"
+                          name="chkqjts$1"
+                        /><label for="chkqjts_1"
+                          >养成良好的小便习惯，适时把尿，培养每日定时大便的习惯；</label
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input
+                          id="chkqjts_2"
+                          type="checkbox"
+                          name="chkqjts$2"
+                        /><label for="chkqjts_2"
+                          >衣着要宽松，不可紧束而妨碍气血流通，影响骨骼生长发育；</label
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input
+                          id="chkqjts_3"
+                          type="checkbox"
+                          name="chkqjts$3"
+                        /><label for="chkqjts_3"
+                          >春季注意保暖，正确理解“春捂”，夏季纳凉要适度，避免直吹电风扇，空调温度不宜过低，秋季避免保暖过度，提倡“三分寒”，正确理解“秋冻”，冬季室内不宜过度密闭保暖，应适当通风，保持空气新鲜；</label
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input
+                          id="chkqjts_4"
+                          type="checkbox"
+                          name="chkqjts$4"
+                        /><label for="chkqjts_4"
+                          >经常到户外活动，多见风日，以增强体质；</label
+                        >
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </fieldset>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 5px" valign="top">
+              <fieldset>
+                <legend><b style="color: red">推拿方法</b></legend>
+                <div style="text-align: left; width: 100%">
+                  <table id="chktnff" border="0">
+                    <tr>
+                      <td>
+                        <input
+                          id="chktnff_0"
+                          type="checkbox"
+                          name="chktnff$0"
+                        /><label for="chktnff_0">按揉足三里穴</label>
+                      </td>
+                      <td>
+                        <input
+                          id="chktnff_1"
+                          type="checkbox"
+                          name="chktnff$1"
+                        /><label for="chktnff_1">按揉迎香穴</label>
+                      </td>
+                      <td>
+                        <input
+                          id="chktnff_2"
+                          type="checkbox"
+                          name="chktnff$2"
+                        /><label for="chktnff_2">按揉四神聪穴</label>
+                      </td>
+                      <td>
+                        <input
+                          id="chktnff_3"
+                          type="checkbox"
+                          name="chktnff$3"
+                        /><label for="chktnff_3">摩腹</label>
+                      </td>
+                      <td>
+                        <input
+                          id="chktnff_4"
+                          type="checkbox"
+                          name="chktnff$4"
+                        /><label for="chktnff_4">捏脊</label>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </fieldset>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 5px" valign="top">
+              <fieldset>
+                <legend><b style="color: red">幼儿期患病情况</b></legend>
+                <div style="text-align: left; width: 100%">
+                  <input
+                    name="chkyeqhb1"
+                    type="checkbox"
+                    id="chkyeqhb1"
+                    onclick="SetYouErHuanBing(&#39;1&#39;);"
+                  />1 无
+                  <input
+                    name="chkyeqhb2"
+                    type="checkbox"
+                    id="chkyeqhb2"
+                    onclick="SetYouErHuanBing(&#39;2&#39;);"
+                  />2 肺炎<input
+                    name="txtfeiyan"
+                    type="text"
+                    id="txtfeiyan"
+                    style="width: 40px; ime-mode: disabled"
+                    onkeypress="numberkeypress(); "
+                    disabled="disabled"
+                    maxlength="3"
+                  />次
+                  <input
+                    name="chkyeqhb3"
+                    type="checkbox"
+                    id="chkyeqhb3"
+                    onclick="SetYouErHuanBing(&#39;3&#39;);"
+                  />3 麻疹
+                  <input
+                    name="chkyeqhb4"
+                    type="checkbox"
+                    id="chkyeqhb4"
+                    onclick="SetYouErHuanBing(&#39;4&#39;);"
+                  />4 贫血
+                  <input
+                    name="chkyeqhb5"
+                    type="checkbox"
+                    id="chkyeqhb5"
+                    onclick="SetYouErHuanBing(&#39;5&#39;);"
+                  />5 营养不良
+                  <input
+                    name="chkyeqhb6"
+                    type="checkbox"
+                    id="chkyeqhb6"
+                    onclick="SetYouErHuanBing(&#39;6&#39;);"
+                  />6 佝偻病<br />
+                  <input
+                    name="chkyeqhb7"
+                    type="checkbox"
+                    id="chkyeqhb7"
+                    onclick="SetYouErHuanBing(&#39;7&#39;);"
+                  />7 因腹泻住院<input
+                    name="txtfuxiezhuyuan"
+                    type="text"
+                    id="txtfuxiezhuyuan"
+                    style="width: 40px; ime-mode: disabled"
+                    onkeypress="numberkeypress(); "
+                    disabled="disabled"
+                    maxlength="3"
+                  />次
+                  <input
+                    name="chkyeqhb8"
+                    type="checkbox"
+                    id="chkyeqhb8"
+                    onclick="SetYouErHuanBing(&#39;8&#39;);"
+                  />8 因外伤住院<input
+                    name="txtwaishangzhuyuan"
+                    type="text"
+                    id="txtwaishangzhuyuan"
+                    style="width: 40px; ime-mode: disabled"
+                    onkeypress="numberkeypress(); "
+                    disabled="disabled"
+                    maxlength="3"
+                  />次
+                  <input
+                    name="chkyeqhb9"
+                    type="checkbox"
+                    id="chkyeqhb9"
+                    onclick="SetYouErHuanBing(&#39;9&#39;);"
+                  />9 其他
+                </div>
+              </fieldset>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 5px" valign="top">
+              <fieldset>
+                <legend><b style="color: red">中医体质辨识</b></legend>
+                <div style="text-align: left; width: 100%">
+                  <table id="chktizhibianshi" border="0">
+                    <tr>
+                      <td>
+                        <input
+                          id="chktizhibianshi_0"
+                          type="checkbox"
+                          name="chktizhibianshi$0"
+                        /><label for="chktizhibianshi_0">平和质</label>
+                      </td>
+                      <td>
+                        <input
+                          id="chktizhibianshi_2"
+                          type="checkbox"
+                          name="chktizhibianshi$2"
+                        /><label for="chktizhibianshi_2">阳虚质</label>
+                      </td>
+                      <td>
+                        <input
+                          id="chktizhibianshi_4"
+                          type="checkbox"
+                          name="chktizhibianshi$4"
+                        /><label for="chktizhibianshi_4">痰湿质</label>
+                      </td>
+                      <td>
+                        <input
+                          id="chktizhibianshi_6"
+                          type="checkbox"
+                          name="chktizhibianshi$6"
+                        /><label for="chktizhibianshi_6">血瘀质</label>
+                      </td>
+                      <td>
+                        <input
+                          id="chktizhibianshi_8"
+                          type="checkbox"
+                          name="chktizhibianshi$8"
+                        /><label for="chktizhibianshi_8">特秉质</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <input
+                          id="chktizhibianshi_1"
+                          type="checkbox"
+                          name="chktizhibianshi$1"
+                        /><label for="chktizhibianshi_1">气虚质</label>
+                      </td>
+                      <td>
+                        <input
+                          id="chktizhibianshi_3"
+                          type="checkbox"
+                          name="chktizhibianshi$3"
+                        /><label for="chktizhibianshi_3">阴虚质</label>
+                      </td>
+                      <td>
+                        <input
+                          id="chktizhibianshi_5"
+                          type="checkbox"
+                          name="chktizhibianshi$5"
+                        /><label for="chktizhibianshi_5">湿热质</label>
+                      </td>
+                      <td>
+                        <input
+                          id="chktizhibianshi_7"
+                          type="checkbox"
+                          name="chktizhibianshi$7"
+                        /><label for="chktizhibianshi_7">气郁质</label>
+                      </td>
+                      <td></td>
+                    </tr>
+                  </table>
+                </div>
+              </fieldset>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 5px" valign="top">
+              <fieldset>
+                <legend><b style="color: red">中医药、营养保健指导</b></legend>
+                <div style="text-align: left; width: 100%">
+                  <table width="100%">
+                    <tr>
+                      <td align="right" width="17%">
+                        1 中&nbsp;医&nbsp;保&nbsp;健&nbsp;指导：
+                      </td>
+                      <td>
+                        <input
+                          name="txtbiaojianzhidao"
+                          type="text"
+                          maxlength="600"
+                          id="txtbiaojianzhidao"
+                          style="width: 500px"
+                        />
+                        <input
+                          name="hdnbiaojianzhidao"
+                          type="hidden"
+                          id="hdnbiaojianzhidao"
+                        />
+                        <input
+                          name="Button13"
+                          type="button"
+                          id="Button13"
+                          class="button"
+                          value="读模板"
+                          onclick="ShowTemplate(&#39;中医保健-中医保健指导&#39;, &#39;txtbiaojianzhidao&#39;, &#39;hdnbiaojianzhidao&#39;, &#39;50&#39;, &#39;35&#39;)"
+                        />
+                        <input
+                          name="Button14"
+                          type="button"
+                          id="Button14"
+                          class="button"
+                          value="存模版"
+                          onclick="    SaveTemplate(&#39;中医保健-中医保健指导&#39;, &#39;txtbiaojianzhidao&#39;)"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        2
+                        膳&nbsp;&nbsp;&nbsp;食&nbsp;&nbsp;&nbsp;指&nbsp;&nbsp;导：
+                      </td>
+                      <td>
+                        <input
+                          name="txtsaishizhidao"
+                          type="text"
+                          maxlength="600"
+                          id="txtsaishizhidao"
+                          style="width: 500px"
+                        />
+                        <input name="Hidden1" type="hidden" id="Hidden1" />
+                        <input
+                          name="Button1"
+                          type="button"
+                          id="Button1"
+                          class="button"
+                          value="读模板"
+                          onclick="ShowTemplate(&#39;中医保健-膳食指导&#39;, &#39;txtsaishizhidao&#39;, &#39;Hidden1&#39;, &#39;50&#39;, &#39;35&#39;)"
+                        />
+                        <input
+                          name="Button2"
+                          type="button"
+                          id="Button2"
+                          class="button"
+                          value="存模版"
+                          onclick="    SaveTemplate(&#39;中医保健-膳食指导&#39;, &#39;txtsaishizhidao&#39;)"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">3 预防意外伤害指导：</td>
+                      <td>
+                        <input
+                          name="txtyufangyiwai"
+                          type="text"
+                          maxlength="600"
+                          id="txtyufangyiwai"
+                          style="width: 500px"
+                        />
+                        <input name="Hidden2" type="hidden" id="Hidden2" />
+                        <input
+                          name="Button3"
+                          type="button"
+                          id="Button3"
+                          class="button"
+                          value="读模板"
+                          onclick="ShowTemplate(&#39;中医保健-预防意外伤害指导&#39;, &#39;txtyufangyiwai&#39;, &#39;Hidden2&#39;, &#39;50&#39;, &#39;35&#39;)"
+                        />
+                        <input
+                          name="Button4"
+                          type="button"
+                          id="Button4"
+                          class="button"
+                          value="存模版"
+                          onclick="    SaveTemplate(&#39;中医保健-预防意外伤害指导&#39;, &#39;txtyufangyiwai&#39;)"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        4 疾&nbsp;病&nbsp;预&nbsp;防&nbsp;指导：
+                      </td>
+                      <td>
+                        <input
+                          name="txtjibiyufang"
+                          type="text"
+                          maxlength="600"
+                          id="txtjibiyufang"
+                          style="width: 500px"
+                        />
+                        <input name="Hidden3" type="hidden" id="Hidden3" />
+                        <input
+                          name="Button5"
+                          type="button"
+                          id="Button5"
+                          class="button"
+                          value="读模板"
+                          onclick="ShowTemplate(&#39;中医保健-疾病预防指导&#39;, &#39;txtjibiyufang&#39;, &#39;Hidden3&#39;, &#39;50&#39;, &#39;35&#39;)"
+                        />
+                        <input
+                          name="Button6"
+                          type="button"
+                          id="Button6"
+                          class="button"
+                          value="存模版"
+                          onclick="    SaveTemplate(&#39;中医保健-疾病预防指导&#39;, &#39;txtjibiyufang&#39;)"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        5
+                        健&nbsp;&nbsp;&nbsp;教&nbsp;&nbsp;&nbsp;处&nbsp;&nbsp;方：
+                      </td>
+                      <td>
+                        <input
+                          name="txtjiankangchufa"
+                          type="text"
+                          maxlength="600"
+                          id="txtjiankangchufa"
+                          style="width: 500px"
+                        />
+                        <input name="Hidden4" type="hidden" id="Hidden4" />
+                        <input
+                          name="Button7"
+                          type="button"
+                          id="Button7"
+                          class="button"
+                          value="读模板"
+                          onclick="ShowTemplate(&#39;中医保健-健教处方&#39;, &#39;txtjiankangchufa&#39;, &#39;Hidden4&#39;, &#39;50&#39;, &#39;35&#39;)"
+                        />
+                        <input
+                          name="Button8"
+                          type="button"
+                          id="Button8"
+                          class="button"
+                          value="存模版"
+                          onclick="    SaveTemplate(&#39;中医保健-健教处方&#39;, &#39;txtjiankangchufa&#39;)"
+                        />
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </fieldset>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 5px" valign="top">
+              <fieldset>
+                <legend>
+                  <b style="color: red">其&nbsp;&nbsp;&nbsp;&nbsp;他</b>
+                </legend>
+                <div style="text-align: left; width: 100%">
+                  <textarea
+                    name="txtqita"
+                    rows="2"
+                    cols="20"
+                    id="txtqita"
+                    style="height: 61px; width: 80%"
+                  ></textarea>
+                </div>
+              </fieldset>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table
+          cellspacing="0"
+          border="0"
+          cellpadding="0"
+          width="97%"
+          align="center"
+        >
+          <tr>
+            <td style="width: 15%; text-align: center"></td>
+            <td style="padding: 5px" valign="top">
+              检查医院：
+              <input
+                name="txtOrg"
+                type="text"
+                id="txtOrg"
+                class="output_text"
+                style="border-bottom: 0px; width: 200px"
+                readonly=""
+                value="清远市清新区石潭镇卫生院"
+              />
+              &nbsp; 检查医生：
+              <input
+                name="txtChkdoctor"
+                type="text"
+                value="欧沛敏"
+                id="txtChkdoctor"
+                style="width: 100px; height: 21px"
+              />
+              &nbsp; 检查日期：
+              <input
+                name="txtChkdate"
+                type="text"
+                id="txtChkdate"
+                style="width: 80px"
+                onfocus="setday(this);"
+                value="2025-11-12"
+              />
+              &nbsp; 下次随访日期：
+              <input
+                name="txtNextChkdate"
+                type="text"
+                id="txtNextChkdate"
+                style="width: 80px"
+                onfocus="setday(this);"
+              />
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div style="text-align: center">
+        <br />
+        <input
+          onclick="if(!CheckValue()) return false;  __doPostBack('btnSave','')"
+          name="btnSave"
+          type="button"
+          id="btnSave"
+          class="button"
+          value="保 存"
+        />
+        &nbsp;
+        <input
+          name="btnDel"
+          type="button"
+          id="btnDel"
+          style="display: none"
+          class="button"
+          value="删 除"
+          onclick="btnDelClick();"
+        />
+        &nbsp;
+        <input
+          name="btnprint"
+          type="button"
+          id="btnprint"
+          style="display: none"
+          class="button"
+          value="打 印"
+          onclick=" PrintReport();"
+        />
+      </div>
+      <input
+        name="hdnHealthId"
+        type="hidden"
+        id="hdnHealthId"
+        value="105387745"
+      />
+      <input name="hdnChildId" type="hidden" id="hdnChildId" value="85554993" />
+      <input name="hdnyouerhuanbing" type="hidden" id="hdnyouerhuanbing" />
+
+      <div>
+        <input
+          type="hidden"
+          name="__EVENTVALIDATION"
+          id="__EVENTVALIDATION"
+          value="/wEdAEMY+ge+h87ICwAIbkDhJqJB8WNOccTUaZrk/fuz2MObmH4WDcYkcg5WmjhF+iXzp5/yzHX3Ops2ZRkK07rDSYwLHxg5HN4Cxj81Owo0n7x8cyrHmNCJDc9C1YR33h7lurh8VhXcm4ZmHdV4hSoW7PwLzQSlgQeNMXtmnnlkjyqS1Fc5zKV1CjBtzG83bkSuD7e+J+n11koQmFaiz+wo2fQqK+0FSY3SyI9Imw90EKanOB2zUS0Rj3un/IwqoRHLmmYmhwZNivRwME0w5e62UOon50dtkW+EyI93wjclyWIggi57pb43u0qQ/Zg6nFsll4vCOBPpUcvEm5FKWVnSY6MmIBzRPKG1GOZt5JKYPYeC9V3gTrR4zTBqfTaB4wjZAIufTb4g6kATuiWizE8LV580Bojgx1PSYhTb5ZIuqudI6DbAQo9EnUgz3u4mvCeuQ/Xj0JdX+K2vb6zxVN9PumSTmb45YqelaDIxI397VfAZvlsNbJq4wOCZYDhvkxUbdId/7ynJoVKm4yEIaPGWf7fsJyjsXphhW1Xr/s1l5wEyvaBpfYtLL8T5oHnBseUcUdc2OS4UlJAAA4rKJ3W4WDDCyrrdENlMuo/JNxTc6j7WAX+DwJ6Ji+ZIkM20DWSJRJLgzNnB9vmLGMRe7J+JrRXI1tolsAele/MTHoRDD7wBi4VnTbOJIu79PcO7C5pTEJAWpYC9f1n1DB7lg4BD0jNzgIMlv9iFeoj5CyzQ8BvHEvFHkiGOlHTJLby7nbJw20wZ09xbdsmOBM3q1ZCgvhzkuMkFAtDfIsnQ1K9sUGArPXdXWwGGpPepa4+TrPjc5D6QluhG745V3IILp3kRPQLlUrcGFP8XmSd4aBigggKoAgvIvlUtHXv4vj7wPpIN7/PN+DvxnwFeFeJ9MIBWR693P1jLJHiqNfRsonZfptdXU2xqLQk2C+hE2rhjYQFL9wfTsE9D7yqsxq1F4J/OeSND5bDqD1t67/Yn/Stpk4YjYS2LNJDcUM/PiOEGS9o2gTU/aCCXphJ6ZvtDrJja0tqTPqItYpozTcUIfPmBRQ6QEHEeCDhHhLXSBYrdqQaJuhSLuQsmekHwH9TXu6dY1Z+hRdlrqrfxf9CQZaDKosKDKRWEQ3HDdEZYkHn/WbpwFRKg9Z3vgtTwoykXQZWNq6owSzrZHY/5euG6eRNYnLTgUFMMFZxrNJGrGlr7PtBCyBNUKc1WI0Vu3cu2jeKMQF67mvEYxSAz/HhIf/i/rbl+L5n/WYOToX6SeKIRKTek9Zev1j/SXTVYmHfXQNQnlj++lliAPKY+KvRmniYVjNuQiDtKbVIdR4I0QMSAgdR9Ql6jOYb+ckAMDB2jCFjb12oOQ4X3UMuHaU9HoUPrz/YJe/Uh/2pIy8gr28bGWtBEACTzePHOMhCG67a0NZ6wtEUADO/VGrzcZ+F2nB5F+fOG4JCWEhs="
+        />
+      </div>
+    </form>
+  </body>
+</html>

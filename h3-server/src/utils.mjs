@@ -15,6 +15,7 @@ const projectRoot = join(__dirname, "../server2Files"); // E:\working\codes\le1\
  * @returns {Object} - 返回读取的 JSON 数据或错误信息
  */
 export const readJsonFile = (filename, event) => {
+  console.log(`-->>读取 JSON 文件: ${filename}`);
   // 处理 CORS
   const corsRes = handleCors(event, {
     origin: "*",

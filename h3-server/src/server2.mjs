@@ -5,15 +5,62 @@ import { readJsonFile } from "./utils.mjs";
 import https from "https";
 
 const app = new H3();
-const ultimateProxyUrl = "https://hqs-demo.mindimed.com";
-// const ultimateProxyUrl = "https://hqs-sgw-test.mindimed.com";
+// const ultimateProxyUrl = "https://hqs-demo.mindimed.com";
+const ultimateProxyUrl = "https://hqs-sgw-test.mindimed.com";
+// const ultimateProxyUrl = "https://hqs-qy-test.mindimed.com";
+// 
 
 //#region  mock 路由
 // app.use("/api/qualityControlTaskForms/formName", (event) =>
 //   readJsonFile("../server2Files/qualityControlTaskForms_formName.json", event)
 // );
-app.use("/api/qualityControlSetting/list", (event) =>
-  readJsonFile("settingList.json", event)
+
+// app.use("/api/qualityControlTaskForms/fields/a68ce56ddedb4a1fba7e6c1971fcab2a", (event) =>
+//   readJsonFile("14608874f6ec463a8d7e7d829fa698b8.json", event)
+// );
+
+// app.use("/api/qualityControlStatistic/irregularReason/**", (event) =>
+//   readJsonFile("irregularReasons.json", event)
+// );
+
+// app.use("/api/qualityControlStatistic/form/**", (event) => 
+//   readJsonFile("list1.json", event)
+// );
+
+// app.use("/api/qualityControlTasks/progress", (event) =>
+//   readJsonFile("lpr07v1.json", event)
+// );
+
+// app.use("/api/qualityControlStatisticDataReport/**", (event) =>
+//   readJsonFile("lpr07v2.json", event)
+// );
+
+// app.use("/api/qualityControlStatisticDataReport/**", (event) =>
+//   readJsonFile("lpr07v3.json", event)
+// );
+
+// app.use("/api/qualityControlTaskForms/formName/**", (event) => 
+//   readJsonFile("lpr07v4.json", event)
+// );
+
+// app.use("/api/qualityControlTaskForms/**", (event) => 
+//   readJsonFile("lpr07v5.json", event)
+// );
+
+// app.use("/api/qualityControlTasks/progress" , (event) =>
+//   readJsonFile("progress.json", event)
+// );
+
+// app.use("/api/hypertension-record-items/show/6b63391684e2adfd8c9be0cb0f3b9a51", (event) =>
+//  readJsonFile("lpr07v6.json", event)
+// );
+
+// app.use("/api/patients/info/1182816", (event) =>
+//  readJsonFile("lpr07v6.json", event)
+// );
+
+app.use("/api/qualityControlTaskForms/fields/d8bde32ca6d042fb9c2853104032279a", (event) =>
+ readJsonFile("lpr07v7.json", event)
 );
 
 //#region
