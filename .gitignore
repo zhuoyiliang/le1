@@ -1,3 +1,5 @@
 node_modules
 h3-server/responseJsonFiles/**.json
 h3-server/server2Files/**.json
+get-dependencies/**
+**/target/**

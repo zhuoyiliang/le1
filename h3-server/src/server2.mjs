@@ -5,7 +5,7 @@ import { readJsonFile } from "./utils.mjs";
 import https from "https";
 
 const app = new H3();
-// const ultimateProxyUrl = "https://hqs-demo.mindimed.com";
+// const ultimateProxyUrl = "https://hqs-sgw-demo.mindimed.com";
 const ultimateProxyUrl = "https://hqs-sgw-test.mindimed.com";
 // const ultimateProxyUrl = "https://hqs-qy-test.mindimed.com";
 // 
@@ -59,9 +59,13 @@ const ultimateProxyUrl = "https://hqs-sgw-test.mindimed.com";
 //  readJsonFile("lpr07v6.json", event)
 // );
 
-app.use("/api/qualityControlTaskForms/fields/d8bde32ca6d042fb9c2853104032279a", (event) =>
- readJsonFile("lpr07v7.json", event)
-);
+// app.use("/api/qualityControlTaskForms/fields/275b8588535b493eb0ea8de0d22cb17d", (event) =>
+//  readJsonFile("lpr07v7.json", event)
+// );
+
+// app.use("/api/patients/info/1450750", (event) =>
+//  readJsonFile("lpr07v6.json", event)
+// );
 
 //#region
 
