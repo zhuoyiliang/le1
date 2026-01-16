@@ -59,9 +59,9 @@ const ultimateProxyUrl = "https://hqs-sgw-test.mindimed.com";
 //  readJsonFile("lpr07v6.json", event)
 // );
 
-// app.use("/api/qualityControlTaskForms/fields/275b8588535b493eb0ea8de0d22cb17d", (event) =>
-//  readJsonFile("lpr07v7.json", event)
-// );
+app.use("/api/qualityControlTaskForms/fields/90643fd9e944414f9762f50b367d64b1", (event) =>
+ readJsonFile("lpr07v7.json", event)
+);
 
 // app.use("/api/patients/info/1450750", (event) =>
 //  readJsonFile("lpr07v6.json", event)
