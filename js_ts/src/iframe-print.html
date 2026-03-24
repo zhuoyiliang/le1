@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Iframe A4 打印示例</title>
+    <style>
+      /* 主页面样式 */
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      .btn {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 4px;
+      }
+      .btn:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>主页面内容</h1>
+    <p>点击下方按钮，将通过 iframe 打印一份 A4 大小的文档。</p>
+    <button class="btn" onclick="printA4Content()">打印 A4 文档</button>
+
+    <script>
+      function printA4Content() {
+        // 1. 创建 iframe (隐藏式)
+        const iframe = document.createElement("iframe");
+        iframe.style.position = "fixed";
+        iframe.style.right = "0";
+        iframe.style.bottom = "0";
+        iframe.style.width = "0";
+        iframe.style.height = "0";
+        iframe.style.border = "0";
+        document.body.appendChild(iframe);
+
+        // 2. 获取 iframe 的文档对象
+        const doc = iframe.contentWindow.document;
+
+        // 3. 准备需要打印的 HTML 内容
+        // 注意：这里可以动态拼接数据，或者克隆主页面的某一部分
+        const contentHtml = `
+                <div class="print-container">
+                    <h1 style="text-align: center;">发货单 / 报告</h1>
+                    <p><strong>日期：</strong> 2026-03-24</p>
+                    <p><strong>编号：</strong> NO.20260324001</p>
+                    <hr>
+                    <p>尊敬的客户：</p>
+                    <p>这是通过 iframe 生成的测试打印内容。此页面已被强制设置为 <strong>A4</strong> 大小。</p>
+                    <p>您可以在此处添加表格、图片或其他复杂布局。</p>
+                    <table border="1" cellspacing="0" cellpadding="10" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <tr style="background: #f0f0f0;">
+                            <th>项目名称</th>
+                            <th>数量</th>
+                            <th>单价</th>
+                            <th>总价</th>
+                        </tr>
+                        <tr>
+                            <td>示例商品 A</td>
+                            <td>10</td>
+                            <td>¥100.00</td>
+                            <td>¥1,000.00</td>
+                        </tr>
+                        <tr>
+                            <td>示例商品 B</td>
+                            <td>5</td>
+                            <td>¥200.00</td>
+                            <td>¥1,000.00</td>
+                        </tr>
+                    </table>
+                    <div style="margin-top: 50px; text-align: right;">
+                        <p>签字：__________________</p>
+                    </div>
+                </div>
+            `;
+
+        // 4. 定义打印专用 CSS (关键步骤)
+        const printCss = `
+                <style>
+                    /* 强制设置纸张大小为 A4 */
+                    @page {
+                        size: A4;
+                        margin: 15mm; /* 设置页边距，可根据需求调整 */
+                    }
+                    
+                    body {
+                        font-family: "SimSun", "Songti SC", serif; /* 打印常用字体 */
+                        font-size: 12pt;
+                        line-height: 1.5;
+                        color: #000;
+                        margin: 0;
+                        padding: 0;
+                    }
+
+                    /* 确保背景色和图片被打印 (部分浏览器需要) */
+                    * {
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+
+                    /* 分页控制示例 */
+                    .page-break {
+                        page-break-after: always;
+                    }
+                </style>
+            `;
+
+        // 5. 写入文档
+        doc.open();
+        doc.write(printCss + contentHtml);
+        doc.close();
+
+        // 6. 等待资源加载完成后打印
+        // 使用 onload 确保图片和样式完全加载，避免打印空白
+        iframe.onload = function () {
+          // 聚焦到 iframe (某些浏览器需要)
+          iframe.contentWindow.focus();
+
+          // 执行打印
+          iframe.contentWindow.print();
+
+          // 可选：打印完成后移除 iframe (注意：print() 是异步的，用户取消或确认后都会执行后续代码)
+          // 如果需要精确知道打印完成，通常需要监听特定事件或使用 setTimeout 延迟移除
+          setTimeout(() => {
+            document.body.removeChild(iframe);
+          }, 1000);
+        };
+      }
+    </script>
+  </body>
+</html>

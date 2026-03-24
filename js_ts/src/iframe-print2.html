@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Iframe 打印 - 模板化方案</title>
+    <style>
+      /* --- 主页面样式 --- */
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        background: #f4f4f4;
+      }
+      .btn {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 4px;
+      }
+
+      /* --- 打印模板容器样式 (在主页面上隐藏) --- */
+      #print-template-container {
+        /* display: none; */
+        /* 关键：在页面上不显示 */
+      }
+      @page {
+        size: A4;
+        margin: 15mm;
+      }
+      body {
+        font-family: "SimSun", "Songti SC", serif;
+        font-size: 12pt;
+        line-height: 1.5;
+        color: #000;
+        margin: 0;
+        padding: 0;
+      }
+      /* 模拟表格样式 */
+      .invoice-box {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .header {
+        text-align: center;
+        border-bottom: 2px solid #333;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+      .total-row td {
+        font-weight: bold;
+        background-color: #fafafa;
+      }
+      /* 强制背景色打印 */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 主页面操作区 -->
+    <h1>订单管理系统</h1>
+    <p>当前订单号：<span id="current-order-id">ORD-2026-888</span></p>
+    <button class="btn" onclick="printFromTemplate()">打印当前订单 (A4)</button>
+
+    <hr />
+
+    <!-- ========================================== -->
+    <!-- 打印模板区域 (默认隐藏，这里写正常的 HTML) -->
+    <!-- ========================================== -->
+    <div id="print-template-container">
+      <div class="invoice-box">
+        <div class="header">
+          <h1>发货清单</h1>
+          <p>感谢您的订购</p>
+        </div>
+
+        <div class="info-row">
+          <div>
+            <strong>订单编号:</strong> <span class="order-id-display"></span
+            ><br />
+            <strong>日期:</strong> <span class="date-display"></span>
+          </div>
+          <div style="text-align: right">
+            <strong>客户:</strong> 张三科技集团<br />
+            <strong>地址:</strong> 北京市朝阳区某某路1号
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>商品名称</th>
+              <th>规格</th>
+              <th>数量</th>
+              <th>单价</th>
+              <th>小计</th>
+            </tr>
+          </thead>
+          <tbody class="product-list">
+            <!-- 这里的内容可以通过 JS 动态生成，也可以写死 -->
+            <!-- 示例静态内容，实际使用时可清空由 JS 填充 -->
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="4" style="text-align: right">总计:</td>
+              <td class="total-amount"></td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div style="margin-top: 40px; font-size: 10pt; color: #666">
+          <p>备注：货物当面点清，离柜概不负责。</p>
+          <p>打印时间：<span class="print-time"></span></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* --- 打印专用样式 (这部分会注入到 iframe 中) --- */
+      /* 注意：这里定义的类名要和 #print-template-container 内部使用的类名一致 */
+      const printStyles = `
+            <style>
+                @page {
+                    size: A4;
+                    margin: 15mm;
+                }
+                body {
+                    font-family: "SimSun", "Songti SC", serif;
+                    font-size: 12pt;
+                    line-height: 1.5;
+                    color: #000;
+                    margin: 0;
+                    padding: 0;
+                }
+                /* 模拟表格样式 */
+                .invoice-box {
+                    width: 100%;
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                .header {
+                    text-align: center;
+                    border-bottom: 2px solid #333;
+                    padding-bottom: 10px;
+                    margin-bottom: 20px;
+                }
+                .info-row {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 10px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                }
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f2f2f2;
+                    font-weight: bold;
+                }
+                .total-row td {
+                    font-weight: bold;
+                    background-color: #fafafa;
+                }
+                /* 强制背景色打印 */
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+            </style>
+        `;
+      // 模拟数据准备过程
+      function prepareData() {
+        const orderId = document.getElementById("current-order-id").innerText;
+        const now = new Date().toLocaleDateString();
+
+        // 1. 填充简单字段
+        document.querySelector(".order-id-display").innerText = orderId;
+        document.querySelector(".date-display").innerText = now;
+        document.querySelector(".print-time").innerText =
+          new Date().toLocaleString();
+
+        // 2. 动态生成表格内容 (模拟从后端获取数据)
+        const products = [
+          { name: "高性能服务器", spec: "32G/1T SSD", qty: 2, price: 12000 },
+          { name: "千兆交换机", spec: "24口", qty: 5, price: 800 },
+          { name: "网线", spec: "六类 10米", qty: 20, price: 45 },
+        ];
+
+        const tbody = document.querySelector(".product-list");
+        tbody.innerHTML = ""; // 清空旧数据
+        let total = 0;
+
+        products.forEach((p) => {
+          const subtotal = p.qty * p.price;
+          total += subtotal;
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+                    <td>${p.name}</td>
+                    <td>${p.spec}</td>
+                    <td>${p.qty}</td>
+                    <td>¥${p.price.toLocaleString()}</td>
+                    <td>¥${subtotal.toLocaleString()}</td>
+                `;
+          tbody.appendChild(tr);
+        });
+
+        document.querySelector(".total-amount").innerText =
+          "¥" + total.toLocaleString();
+      }
+
+      // 执行打印的核心函数
+      function printFromTemplate() {
+        // 0. 先准备数据 (确保模板里的内容是最新的)
+        prepareData();
+
+        // 1. 获取模板元素
+        const templateContent = document.getElementById(
+          "print-template-container",
+        );
+
+        // 2. 创建 iframe
+        const iframe = document.createElement("iframe");
+        iframe.style.position = "fixed";
+        iframe.style.right = "0";
+        iframe.style.bottom = "0";
+        iframe.style.width = "0";
+        iframe.style.height = "0";
+        iframe.style.border = "0";
+        document.body.appendChild(iframe);
+
+        const doc = iframe.contentWindow.document;
+
+        // 3. 克隆节点 (深拷贝，包含所有子元素和事件 - 虽然打印不需要事件)
+        // 为什么用 cloneNode? 因为这样不会把原页面上的内容移走，原页面还能继续看
+        const clonedContent = templateContent.cloneNode(true);
+
+        // 4. 重要：克隆后，原本 display:none 的属性还在，需要移除或覆盖，否则打印出来是空的
+        clonedContent.style.display = "block";
+
+        // 5. 构建完整的 HTML 文档
+        doc.open();
+        // 写入 CSS + 克隆后的 HTML 内容
+        doc.write(printStyles + clonedContent.innerHTML);
+        doc.close();
+
+        // 6. 加载完成后打印
+        iframe.onload = function () {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+
+          // 延迟清理
+          setTimeout(() => {
+            document.body.removeChild(iframe);
+          }, 1000);
+        };
+      }
+    </script>
+  </body>
+</html>
