@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vue-print-nb插件示例</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-print-nb@1.7.0/dist/vue-print-nb.min.js"></script>
+    <style>
+      .print-container {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin: 20px 0;
+      }
+      .print-header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .print-footer {
+        text-align: right;
+        margin-top: 20px;
+        font-size: 12px;
+      }
+      @media print {
+        .no-print {
+          display: none;
+        }
+        @page {
+          size: A4;
+          margin: 10mm;
+        }
+        body {
+          font-size: 12pt;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div v-print="printConfig" class="no-print">
+        <button>使用插件打印</button>
+      </div>
+
+      <div id="printContent" class="print-container">
+        <div class="print-header">
+          <h2>{{ companyName }}</h2>
+          <p>地址: {{ companyAddress }}</p>
+        </div>
+
+        <h3>采购清单</h3>
+        <table border="1" style="width: 100%">
+          <tr>
+            <th>序号</th>
+            <th>物品名称</th>
+            <th>规格</th>
+            <th>单位</th>
+            <th>数量</th>
+            <th>备注</th>
+          </tr>
+          <tr v-for="(item, index) in purchaseItems" :key="index">
+            <td>{{ index + 1 }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.spec }}</td>
+            <td>{{ item.unit }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.remark || '-' }}</td>
+          </tr>
+        </table>
+
+        <div class="print-footer">
+          <p>打印时间: {{ printTime }}</p>
+          <p>经办人: {{ operator }}</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      Vue.use(window["vue-print-nb"]);
+
+      new Vue({
+        el: "#app",
+        data: {
+          companyName: "XX科技有限公司",
+          companyAddress: "北京市海淀区中关村软件园",
+          operator: "采购部-李经理",
+          purchaseItems: [
+            {
+              name: "显示器",
+              spec: "27英寸 4K",
+              unit: "台",
+              quantity: 10,
+              remark: "戴尔品牌",
+            },
+            { name: "办公椅", spec: "人体工学", unit: "把", quantity: 20 },
+            { name: "文件柜", spec: "铁皮 1.8米", unit: "个", quantity: 5 },
+          ],
+          printConfig: {
+            id: "printContent",
+            popTitle: "采购清单打印",
+            extraHead: '<meta http-equiv="Content-Language" content="zh-cn"/>',
+            preview: true,
+            previewTitle: "打印预览",
+            beforeOpenCallback: () => console.log("准备打印..."),
+            openCallback: () => console.log("开始打印..."),
+            closeCallback: () => console.log("关闭打印窗口"),
+          },
+        },
+        computed: {
+          printTime() {
+            return new Date().toLocaleString();
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

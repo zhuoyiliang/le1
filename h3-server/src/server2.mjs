@@ -6,8 +6,8 @@ import https from "https";
 
 const app = new H3();
 // const ultimateProxyUrl = "https://hqs-sgw-demo.mindimed.com";
-const ultimateProxyUrl = "https://hqs-sgw-test.mindimed.com";
-// const ultimateProxyUrl = "https://hqs-qy-test.mindimed.com";
+// const ultimateProxyUrl = "https://hqs-sgw-test.mindimed.com";
+const ultimateProxyUrl = "https://hqs-qy-test.mindimed.com";
 // 
 
 //#region  mock 路由

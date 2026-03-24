@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vue Iframe 打印示例</title>
+    <!-- 引入 Vue 2 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+
+    <style>
+      /* --- 主页面样式 --- */
+      #app {
+        padding: 20px;
+        font-family: sans-serif;
+      }
+      .btn {
+        padding: 10px 20px;
+        background-color: #42b983;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 4px;
+      }
+
+      /* --- 打印模板容器 (关键：隐藏) --- */
+      /* 注意：这个容器必须在 #app 内部，这样 Vue 才能控制它里面的 {{ }} 数据 */
+      #print-template-wrapper {
+        /* display: none;  */
+        /* 在页面上隐藏，但 Vue 会正常渲染它 */
+      }
+      .print-content {
+        width: 210mm;
+        min-height: 297mm;
+        /* padding: 20mm; */
+        box-sizing: border-box;
+        background: white;
+      }
+      @page {
+        size: A4;
+        margin: 15mm;
+      }
+      body {
+        font-family: "SimSun", serif;
+        font-size: 12pt;
+        color: #000;
+        margin: 0;
+        padding: 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #333;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+        -webkit-print-color-adjust: exact;
+      }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>公司管理后台</h1>
+      <p>当前公司地址：<strong>{{ companyAddress }}</strong></p>
+      <p>联系人：{{ contactPerson }}</p>
+
+      <button class="btn" @click="handlePrint">打印发货单 (A4)</button>
+
+      <!-- ========================================== -->
+      <!-- 打印专用模板 (隐藏在 #app 内，受 Vue 管控) -->
+      <!-- ========================================== -->
+      <div id="print-template-wrapper">
+        <div class="print-content">
+          <h2 style="text-align: center">发货通知单</h2>
+          <hr />
+          <div style="margin: 20px 0">
+            <p><strong>地址:</strong> {{ companyAddress }}</p>
+            <p><strong>联系人:</strong> {{ contactPerson }}</p>
+            <p><strong>打印时间:</strong> {{ currentTime }}</p>
+          </div>
+
+          <table
+            border="1"
+            cellspacing="0"
+            cellpadding="10"
+            style="width: 100%; border-collapse: collapse"
+          >
+            <thead>
+              <tr style="background: #f0f0f0">
+                <th>商品</th>
+                <th>数量</th>
+                <th>备注</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in orderItems" :key="index">
+                <td>{{ item.name }}</td>
+                <td>{{ item.qty }}</td>
+                <td>{{ item.remark }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="margin-top: 30px; text-align: right">
+            <p>签字：_________________</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 定义打印专用的 CSS 字符串
+      const PRINT_CSS = `
+        <style>
+            @page { size: A4; margin: 15mm; }
+            body { font-family: "SimSun", serif; font-size: 12pt; color: #000; margin: 0; padding: 0; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; -webkit-print-color-adjust: exact; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        </style>
+    `;
+
+      new Vue({
+        el: "#app",
+        data: {
+          companyAddress: "北京市朝阳区科技园路 88 号大厦 101 室",
+          contactPerson: "王经理",
+          currentTime: "",
+          orderItems: [
+            { name: "Vue 实战指南", qty: 5, remark: "精装版" },
+            { name: "机械键盘", qty: 2, remark: "青轴" },
+            { name: "4K 显示器", qty: 1, remark: "Type-C 接口" },
+          ],
+        },
+        methods: {
+          handlePrint() {
+            // 1. 更新动态数据 (例如打印时间)
+            this.currentTime = new Date().toLocaleString();
+
+            // 2. 【关键步骤】强制 Vue 更新 DOM
+            // 因为 currentTime 刚修改，Vue 是异步更新 DOM 的。
+            // 如果直接去克隆节点，可能拿到的还是旧的时间。
+            this.$nextTick(() => {
+              this.executeIframePrint();
+            });
+          },
+
+          executeIframePrint() {
+            // 3. 获取已经由 Vue 渲染好的隐藏模板内容
+            const templateWrapper = document.getElementById(
+              "print-template-wrapper",
+            );
+
+            // 4. 创建 iframe
+            const iframe = document.createElement("iframe");
+            iframe.style.position = "fixed";
+            iframe.style.right = "0";
+            iframe.style.bottom = "0";
+            iframe.style.width = "0";
+            iframe.style.height = "0";
+            iframe.style.border = "0";
+            document.body.appendChild(iframe);
+
+            const doc = iframe.contentWindow.document;
+
+            // 5. 克隆节点
+            // 此时 clone 出来的内容里，{{ companyAddress }} 已经被替换成真实的文本了
+            const clonedContent = templateWrapper.cloneNode(true);
+
+            // 6. 修正样式：移除隐藏属性，否则打印出来是空的
+            clonedContent.style.display = "block";
+            // 也可以顺便给克隆出来的内容加个类名方便定位，或者直接取 innerHTML
+            const contentHtml = clonedContent.innerHTML;
+
+            // 7. 写入 iframe 文档
+            doc.open();
+            doc.write(PRINT_CSS + contentHtml);
+            doc.close();
+
+            // 8. 加载完成后打印
+            iframe.onload = () => {
+              iframe.contentWindow.focus();
+              iframe.contentWindow.print();
+
+              // 清理 iframe
+              setTimeout(() => {
+                document.body.removeChild(iframe);
+              }, 1000);
+            };
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
