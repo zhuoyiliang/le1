@@ -1,31 +1,73 @@
 #![allow(dead_code)]
 #![allow(unused)]
 
-use minigrep::Config;
-use std::env;
+use core::{fmt, sync};
+use hello_macro::HelloMacro;
+use hello_macro_derive::HelloMacro;
+use std::cell::RefCell;
+use std::io::{self, Write};
+use std::mem::drop;
+use std::ops::Add;
+use std::ops::Deref;
+use std::pin::Pin;
+use std::pin::pin;
 use std::process;
-use std::thread;
+use std::rc::{Rc, Weak};
+use std::sync::Mutex;
+use std::sync::atomic;
+use std::sync::mpsc;
+use std::sync::{
+    Arc,
+    atomic::{AtomicI32, Ordering},
+};
+use std::thread::{self, Thread};
+use std::time::Duration;
+use std::{env, future};
+use std::{
+    fs,
+    io::{BufReader, prelude::*},
+    net::{TcpListener, TcpStream},
+};
+use trpl::{Html, ReceiverStream, Stream, StreamExt};
+use minigrep::ThreadPool;
 
 #[allow(unused)]
 fn main() {
-    // let args: Vec<String> = env::args().collect();
-    // #[allow(unused_variables)]
-    // let config = Config::build(&args).unwrap_or_else(|err| {
-    //     eprintln!("Problem parsing arguments: {err}");
-    //     process::exit(1);
-    // });
-    // if let Err(e) = minigrep::run(config) {
-    //     eprintln!("Application error: {e}");
-    //     process::exit(1);
-    // }
+    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+    let pool = ThreadPool::new(4);
 
-    let b = Box::new(5);
+    for stream in listener.incoming() {
+        let stream = stream.unwrap();
+        pool.execute(|| {
+            handle_connection(stream);
+        })
+    }  
 }
 
-struct MyBox<T>(T);
+fn handle_connection(mut stream: TcpStream) {
+    let buf_reader = BufReader::new(&stream);
+    let request_line = buf_reader.lines().next().unwrap().unwrap();
 
-impl<T> MyBox<T> {
-    fn new(x: T) -> MyBox<T> {
-        MyBox(x)
-    }
+    // let (status_line, filename) = if request_line == "GET / HTTP/1.1" {
+    //     ("HTTP/1.1 200 OK", "hello.html")
+    // } else {
+    //     ("HTTP/1.1 404 NOT FOUND", "404.html")
+    // };
+
+    let (status_line, filename) = match &request_line[..] {
+        "GET / HTTP/1.1" => ("HTTP/1.1 200 OK", "hello.html"),
+        "GET /sleep HTTP/1.1" => {
+            thread::sleep(Duration::from_secs(5));
+            ("HTTP/1.1 200 OK", "hello.html")
+        },
+        _ => ("HTTP/1.1 404 NOT FOUND", "404.html"),
+    };
+
+    let contents = fs::read_to_string(filename).unwrap();
+    let length = contents.len();
+    let response = format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
+    stream.write_all(response.as_bytes()).unwrap();
 }
+
+#[derive(HelloMacro)]
+struct Pancakes;

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>baz.html</h1>
+
+    <script>
+      window.addEventListener("popstate", (event) => {
+        let state = event.state;
+        console.log("baz.html");
+        console.log(history.state);
+        if (state) {
+          // 第一个页面加载时状态是 null
+          //   processState(state);
+          console.log(state);
+        }
+      });
+    </script>
+  </body>
+</html>

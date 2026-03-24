@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+trpl = "0.3.0"
+hello_macro = { path = "./hello_macro" }
+hello_macro_derive = { path = "./hello_macro/hello_macro_derive" }
+
 
 [profile.dev]
 opt-level = 0
@@ -13,4 +17,4 @@ opt-level = 3
 
 [workspace]
 resolver = "3"
-members = ["add_one","adder"]
+members = ["hello_macro", "hello_macro/hello_macro_derive"]

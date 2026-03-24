@@ -1,0 +1,17 @@
+@media print {
+  #header,
+  #footer,
+  #nav {
+    display: none !important;
+  }
+}
+@page {
+  size: A4;
+  margin: 0;
+}
+
+.container {
+  height: 140vh;
+  width: 200mm;
+  border: 1mm solid black;
+}
